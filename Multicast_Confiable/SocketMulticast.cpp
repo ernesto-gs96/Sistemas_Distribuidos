@@ -94,7 +94,7 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
         while(nn==-1)
         {
-            cout << "Esperando respuesta" << endl;
+            cout << "Esperando respuesta:" << i << endl;
             nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
         }
         
@@ -140,7 +140,13 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     
     SocketDatagrama socketUnicast(6666);  
     PaqueteDatagrama confirmacion(paqueteDatagrama.obtieneDatos(), sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
-    socketUnicast.envia(confirmacion);
+    n = socketUnicast.envia(confirmacion);
+    while (n == -1)
+    {
+        cout << "ERROR ENVIA recibeConfiable" << endl;
+        n = socketUnicast.envia(confirmacion);
+    }
+    
     socketUnicast.~SocketDatagrama();
 
     memcpy(&aux,paqueteDatagrama.obtieneDatos(),sizeof(int));

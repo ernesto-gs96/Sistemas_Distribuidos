@@ -46,10 +46,12 @@ int SocketDatagrama::envia(PaqueteDatagrama &paqueteDatagrama){
     direccionForanea.sin_addr.s_addr = inet_addr(paqueteDatagrama.obtieneDireccion());
     direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
     int res=sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-    if(res<0){
-        std::cout<<"No se envio"<<std::endl;
+    if(res == -1){
+        cout<<"No se envio"<<endl;
+        return -1;
     }else{
-        std::cout<<"Se envio"<<std::endl;
+        cout<<"Se envio"<<endl;
+        return 1;
     }
 }
 

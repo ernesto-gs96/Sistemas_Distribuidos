@@ -64,7 +64,7 @@ int SocketMulticast::envia(PaqueteDatagrama &paqueteDatagrama, unsigned char ttl
 
 int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigned char ttl, int num_receptores) {
     
-    int contador = 0, id,n,nn;
+    int contador = 0, id,n,nn = 1;
 
     n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
     while (n == -1)
@@ -91,11 +91,20 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         
         PaqueteDatagrama confirmacion(sizeof(int));
 
-        nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
-        while(nn==-1)
+        n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+        while(n==-1)
         {
+            if (nn == 7)
+            {
+                n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
+                if(n ==-1)
+                    cout << strerror (errno) << endl;
+                nn = 0;
+            }
+            
             cout << "Esperando respuesta:" << i << endl;
-            nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
+            n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+            nn++;
         }
         
         memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));

@@ -39,7 +39,8 @@ int main(int argc, char const *argv[]){
         if ( verificacion == -1 ) {
             cout << "Ha ocurrido un errror" << endl;
             break;
-        }          
+        }
+                  
     }
 
     return 0;

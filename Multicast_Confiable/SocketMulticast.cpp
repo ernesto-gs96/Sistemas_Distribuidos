@@ -102,7 +102,7 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
                 nn = 0;
             }
             
-            cout << "Esperando respuesta:" << i << endl;
+            cout << "Esperando respuesta:" << i << ", Volver a intentar:" << nn << endl;
             n = socketUnicast.recibeTimeout(confirmacion,2,500000);
             nn++;
         }

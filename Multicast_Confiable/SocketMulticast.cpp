@@ -76,8 +76,13 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     direccionForanea.sin_family = AF_INET;
     direccionForanea.sin_addr.s_addr = inet_addr(paqueteDatagrama.obtieneDireccion());
     direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
-    sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-
+    n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
+    
+    if (n == -1)
+    {
+        cout << n << endl;
+    }
+    
     SocketDatagrama socketUnicast(7200);
 
     for(int i = 0; i < num_receptores; i++ ){
@@ -99,9 +104,10 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
 
     if (num_receptores == contador) 
         return 1;
-    else 
-        std::cout << "FALTARON RESPUESTAS" << std::endl; return -1;
-    
+    else {
+        cout << "FALTARON RESPUESTAS" << endl; 
+        return -1;
+    }
 
 }
 

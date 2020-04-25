@@ -11,12 +11,22 @@
 #include <errno.h>
 
 SocketDatagrama::SocketDatagrama(int puerto){
-    s = socket(AF_INET, SOCK_DGRAM, 0);
+    int _aux;
+    //s = socket(AF_INET, SOCK_DGRAM, 0);
+    do
+    {
+        s = socket(AF_INET, SOCK_DGRAM, 0);
+    }while (s == -1);
     bzero((char *)&direccionLocal, sizeof(direccionLocal));
     direccionLocal.sin_family = AF_INET;
     direccionLocal.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY inet_addr(argv[1])
     direccionLocal.sin_port = htons(puerto);
-    bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal));
+    //_aux = bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal));
+    do
+    {
+        _aux = bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal));
+    }while (_aux == -1);
+    
 }
 
 SocketDatagrama::~SocketDatagrama(){

@@ -66,10 +66,12 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     
     int contador = 0, id,n,nn;
 
-    do
+    n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
+    while (n == -1)
     {
+        cout << "Error en setsockopt del metodo enviaConfiable" << endl;
         n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    } while (n == -1);
+    } 
 
     int client = sizeof(direccionForanea);
     bzero((char *)&direccionForanea, sizeof(direccionForanea));
@@ -78,11 +80,11 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
     n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
     
-    if (n == -1)
+    while (n == -1)
     {
-        cout << n << endl;
-    }
-    
+        cout << "Error en sendto del metodo enviaConfiable" << endl;
+        n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
+    } 
     SocketDatagrama socketUnicast(7200);
 
     for(int i = 0; i < num_receptores; i++ ){
@@ -126,6 +128,12 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     int client = sizeof(direccionForanea);
     int n = recvfrom(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
     
+    while (n == -1)
+    {
+        cout << "Error en recvfrom del metodo recibeConfiable" << endl;
+        n = recvfrom(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
+    }
+
     paqueteDatagrama.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));
     std::cout << paqueteDatagrama.obtieneDireccion() << std::endl;

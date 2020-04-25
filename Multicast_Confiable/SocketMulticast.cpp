@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <errno.h>
 
+using namespace std;
+
 SocketMulticast::SocketMulticast(int puerto) {
     s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     int reuse = 1;
@@ -61,19 +63,20 @@ int SocketMulticast::envia(PaqueteDatagrama &paqueteDatagrama, unsigned char ttl
 }
 
 int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigned char ttl, int num_receptores) {
-    int n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    int contador = 0, id,nn;
+    
+    int contador = 0, id,n,nn;
 
-    if ( n < 0 ) {
-         printf("Ha ocurrido un error al enviar el paquete \n");
-    } else {
-        int client = sizeof(direccionForanea);
-        bzero((char *)&direccionForanea, sizeof(direccionForanea));
-        direccionForanea.sin_family = AF_INET;
-        direccionForanea.sin_addr.s_addr = inet_addr(paqueteDatagrama.obtieneDireccion());
-        direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
-        sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-    }
+    do
+    {
+        n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
+    } while (n == -1);
+
+    int client = sizeof(direccionForanea);
+    bzero((char *)&direccionForanea, sizeof(direccionForanea));
+    direccionForanea.sin_family = AF_INET;
+    direccionForanea.sin_addr.s_addr = inet_addr(paqueteDatagrama.obtieneDireccion());
+    direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
+    sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
 
     SocketDatagrama socketUnicast(7200);
 

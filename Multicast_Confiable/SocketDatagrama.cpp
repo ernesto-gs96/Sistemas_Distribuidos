@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <errno.h>
 
+using namespace std;
+
 SocketDatagrama::SocketDatagrama(int puerto){
     int _aux;
     //s = socket(AF_INET, SOCK_DGRAM, 0);

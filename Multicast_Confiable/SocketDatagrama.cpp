@@ -17,20 +17,20 @@ using namespace std;
 SocketDatagrama::SocketDatagrama(int puerto){
     int _aux;
     s = socket(AF_INET, SOCK_DGRAM, 0);
-    while (s == -1)
+    if (s == -1)
     {
-        cout << "Error al crear el socket" << endl;
-        s = socket(AF_INET, SOCK_DGRAM, 0);
+        cout << "ERROR EN SOCKET EN EL CONSTRUCTOR SOCKETDATAGRAMA" << endl;
+        cout << strerror (errno) << endl;
     }
     bzero((char *)&direccionLocal, sizeof(direccionLocal));
     direccionLocal.sin_family = AF_INET;
     direccionLocal.sin_addr.s_addr = INADDR_ANY; //INADDR_ANY inet_addr(argv[1])
     direccionLocal.sin_port = htons(puerto);
     _aux = bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal));
-    while (_aux == -1)
+    if (_aux == -1)
     {
-        cout << "Error en bind" << endl;
-        _aux = bind(s, (struct sockaddr *)&direccionLocal, sizeof(direccionLocal));
+        cout << "ERROR EN bind EN EL CONSTRUCTOR SOCKETDATAGRAMA" << endl;
+        cout << strerror (errno) << endl;
     }
     
 }
@@ -76,17 +76,17 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     timeval.tv_usec = microsegundos;
     
     n = setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeval, sizeof(timeval));
-    while (n == -1)
+    if (n == -1)
     {
-        cout << "Error en setsockopt del metodo recibeTimeout" << endl;
-        n =  setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeval, sizeof(timeval));
+        cout << "ERROR EN SETSCOCKOPT METODO RECIBETIMEOUT" << endl;
+        cout << strerror (errno) << endl;
     }
     //int n = recibe(p);
     n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
     
     if (n == -1)
     {
-        cout << "Error en recvfrom del metodo recibeTimeout" << endl;
+        cout << "ERROR EN RECVFROM METODO RECIBETIMEOUT" << endl;
         cout << strerror (errno) << endl;
     }
     

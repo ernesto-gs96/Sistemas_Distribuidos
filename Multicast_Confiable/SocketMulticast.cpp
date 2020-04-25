@@ -64,14 +64,20 @@ int SocketMulticast::envia(PaqueteDatagrama &paqueteDatagrama, unsigned char ttl
 
 int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigned char ttl, int num_receptores) {
     
-    int contador = 0, id,n,nn = 1;
+    int contador = 0, id,n,nn = 1, nn2 = 1;
 
     n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    while (n == -1)
+    if (n == -1)
+    {
+        cout << "ERROR EN SETSCOCKOPT METODO ENVIACONFIABLE" << endl;
+        cout << strerror (errno) << endl;
+    }
+    
+    /*while (n == -1)
     {
         cout << "Error en setsockopt del metodo enviaConfiable" << endl;
         n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    } 
+    } */
 
     int client = sizeof(direccionForanea);
     bzero((char *)&direccionForanea, sizeof(direccionForanea));
@@ -79,12 +85,16 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     direccionForanea.sin_addr.s_addr = inet_addr(paqueteDatagrama.obtieneDireccion());
     direccionForanea.sin_port = htons(paqueteDatagrama.obtienePuerto());
     n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-    
-    while (n == -1)
+    if (n == -1)
+    {
+        cout << "ERROR EN SENDTO METODO ENVIACONFIABLE" << endl;
+        cout << strerror (errno) << endl;
+    }
+    /*while (n == -1)
     {
         cout << "Error en sendto del metodo enviaConfiable" << endl;
-        n = setsockopt(s, IPPROTO_IP, IP_MULTICAST_TTL, (void *) &ttl, sizeof(ttl));
-    } 
+        n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
+    } */
     SocketDatagrama socketUnicast(7200);
 
     for(int i = 0; i < num_receptores; i++ ){
@@ -92,20 +102,31 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         PaqueteDatagrama confirmacion(sizeof(int));
 
         n = socketUnicast.recibeTimeout(confirmacion,2,500000);
-        while(n==-1)
+
+        if (n == -1)
+        {
+            cout << "ERROR EN RECIBETIMEOUT METODO ENVIACONFIABLE" << endl;
+            cout << strerror (errno) << endl;
+        }
+        /*while(n==-1)
         {
             if (nn == 7)
             {
+                if (nn2 = 2) //MAXIMO 2 INTENTOS DE ENVIO
+                    return -1;
+                
                 n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-                if(n ==-1)
+                if(n ==-1){
                     cout << strerror (errno) << endl;
+                }
                 nn = 0;
-            }
+                nn2++;
+            }*/
             
-            cout << "Esperando respuesta:" << i << ", Volver a intentar:" << nn << endl;
-            n = socketUnicast.recibeTimeout(confirmacion,2,500000);
-            nn++;
-        }
+            //cout << "Esperando respuesta:" << i << ", Volver a intentar:" << nn << endl;
+            //n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+            //nn++;
+        //}
         
         memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
 

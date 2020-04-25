@@ -28,7 +28,6 @@ int main(int argc, char const *argv[])
         memcpy(&monto,paqueteDatagrama_Recepcion.obtieneDatos(),sizeof(int));
         nbd = monto + nbd;
         cout<< "NBD: "<<nbd << endl;
-        
     }
 
     socketMulticast.salirseGrupo(ip);

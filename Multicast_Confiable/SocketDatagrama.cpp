@@ -6,9 +6,11 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <strings.h>
+#include <cstring>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <errno.h>
+
 
 using namespace std;
 
@@ -79,11 +81,23 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     }
     //int n = recibe(p);
     n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
-    while (n == -1)
+    
+    if (n == -1)
     {
         cout << "Error en recvfrom del metodo recibeTimeout" << endl;
-        n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
+        cout << strerror (errno) << endl;
     }
+    
+
+    /*while (n == -1)
+    {
+        //PRIMER ERROR AQUI
+        cout << "Error en recvfrom del metodo recibeTimeout" << endl;
+        cout << errno << endl;
+        cout << strerror (errno) << endl;
+        //printf("%s",strerror(errno));
+        n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
+    }*/
 
     p.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     p.inicializaPuerto(ntohs(direccionForanea.sin_port));

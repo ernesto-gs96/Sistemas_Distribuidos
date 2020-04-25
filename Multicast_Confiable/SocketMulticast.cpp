@@ -88,16 +88,17 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     for(int i = 0; i < num_receptores; i++ ){
         
         PaqueteDatagrama confirmacion(sizeof(int));
-        
-        do{
+
+        nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
+        while(nn==-1)
+        {
+            cout << "Esperando respuesta" << endl;
             nn = socketUnicast.recibeTimeout(confirmacion,2,500000);
-        }while(nn==-1);
+        }
         
         memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
-        if( nn != -1 )
-            contador++;
-        else 
-            break;
+
+        contador++;
     }
 
     socketUnicast.~SocketDatagrama();

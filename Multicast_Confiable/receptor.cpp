@@ -8,6 +8,7 @@
 #include <time.h>
 
 #define TAM_MAX_DATA 650
+using namespace std;
 
 int main(int argc, char const *argv[])
 {
@@ -26,7 +27,7 @@ int main(int argc, char const *argv[])
         socketMulticast.recibeConfiable(paqueteDatagrama_Recepcion);
         memcpy(&monto,paqueteDatagrama_Recepcion.obtieneDatos(),sizeof(int));
         nbd = monto + nbd;
-        std::cout<< "NBD: "<<nbd << std::endl;
+        cout<< "NBD: "<<nbd << endl;
     }
 
     socketMulticast.salirseGrupo(ip);

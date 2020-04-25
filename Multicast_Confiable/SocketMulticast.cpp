@@ -102,11 +102,19 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         PaqueteDatagrama confirmacion(sizeof(int));
 
         n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+        do{
+            n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+        }while (n == -1);
+        
 
         if (n == -1)
         {
             cout << "ERROR EN RECIBETIMEOUT METODO ENVIACONFIABLE" << endl;
             cout << strerror (errno) << endl;
+        }
+        else{
+            memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
+            contador++;
         }
         /*while(n==-1)
         {
@@ -127,10 +135,6 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
             //n = socketUnicast.recibeTimeout(confirmacion,2,500000);
             //nn++;
         //}
-        
-        memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
-
-        contador++;
     }
 
     socketUnicast.~SocketDatagrama();

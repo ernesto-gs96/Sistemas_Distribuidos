@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
     socketMulticast.unirseGrupo(ip);     
 
     while ( 1 ) {
-        socketMulticast.recibeConfiable(paqueteDatagrama_Recepcion);
+        socketMulticast.recibe(paqueteDatagrama_Recepcion);
         memcpy(&monto,paqueteDatagrama_Recepcion.obtieneDatos(),sizeof(int));
         nbd = monto + nbd;
         cout<< "NBD: "<<nbd << endl;

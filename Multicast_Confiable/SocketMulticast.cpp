@@ -153,9 +153,12 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     }
     
     memcpy(&datos,paqueteDatagrama.obtieneDatos(),2 * sizeof(int));
-    cout << datos[1] << endl;
+    if (indicador == 99)
+        indicador = 0;
+    
+    //cout << datos[1] << endl;
     for (int i = 0; i < indicador; i++){
-        cout << historial[i].requestId << " =?= "<< datos[1] << endl;
+        //cout << historial[i].requestId << " =?= "<< datos[1] << endl;
         if (datos[1] == historial[i].requestId)
             return -2;
     }

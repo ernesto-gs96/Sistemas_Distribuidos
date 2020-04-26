@@ -16,6 +16,8 @@
 using namespace std;
 
 SocketMulticast::SocketMulticast(int puerto) {
+
+    historial[0].requestId = -1;
     s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
     int reuse = 1;
     if (setsockopt(s, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) == -1) {

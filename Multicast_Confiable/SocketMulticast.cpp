@@ -152,6 +152,7 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     id = (int*)paqueteDatagrama.obtieneDatos();
 
     for (int i = 0; i < indicador; i++){
+        cout << historial[i].requestId << " =?= "<< id[1] << endl;
         if (id[1] == historial[i].requestId)
             return -2;
     }    

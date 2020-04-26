@@ -24,7 +24,7 @@ int main(int argc, char const *argv[]){
 
     int nbd = 0;
     int resp,deposito;
-    int* aux;
+    int aux[2];
     int veces = 7,n;
 
     SocketMulticast socketMulticast(puerto);

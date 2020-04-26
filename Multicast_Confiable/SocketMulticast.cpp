@@ -151,20 +151,22 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     if (n == -1){
         cout << "Error en recvfrom del metodo recibeConfiable" << endl;
     }
+    /*
     id = (int*)paqueteDatagrama.obtieneDatos();
-
+    cout << &id << endl;
     for (int i = 0; i < indicador; i++){
         cout << historial[i].requestId << " =?= "<< id[1] << endl;
         if (id[1] == historial[i].requestId)
             return -2;
     }
+    
 
     cout << "Guardando mensaje en historial" << endl;
     memcpy(historial[indicador].arguments, id, sizeof(int)); //Ultimo mensaje enviado
 	memcpy(historial[indicador].ip, paqueteDatagrama.obtieneDireccion(), 16);
 	historial[indicador].puerto = paqueteDatagrama.obtienePuerto();
 	historial[indicador++].requestId = id[1];
-
+*/
     paqueteDatagrama.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));
     cout << paqueteDatagrama.obtieneDireccion() << endl;

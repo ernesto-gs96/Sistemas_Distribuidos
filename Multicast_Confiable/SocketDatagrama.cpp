@@ -88,6 +88,8 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     {
         cout << "ERROR EN RECVFROM METODO RECIBETIMEOUT" << endl;
         cout << strerror (errno) << endl;
+        if (errno == EAGAIN)
+            return -2;
     }
     
 

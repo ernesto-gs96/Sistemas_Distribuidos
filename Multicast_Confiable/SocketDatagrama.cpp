@@ -85,7 +85,7 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     //int n = recibe(p);
     int nn;
     //n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
-    n = recvfrom(s,(void*)&nn, sizeof(int), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
+    n = recvfrom(s,p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
     if(n < 0){
 		if(errno == EWOULDBLOCK)
 		{
@@ -104,9 +104,12 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     p.inicializaPuerto(ntohs(direccionForanea.sin_port));
     cout << p.obtieneDireccion() << endl;
 
-    int *conf = (int*)&nn;
-    cout << "conf:" << *conf << endl;
-    return *conf;
+    int *conf = (int*)p.obtieneDatos();
+    if (conf > 0)
+        return 1;
+    else
+        return -2;
+    
 }
 
 struct sockaddr_in SocketDatagrama::getDirForanea() {

@@ -103,6 +103,7 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     p.inicializaPuerto(ntohs(direccionForanea.sin_port));
     cout << p.obtieneDireccion() << endl;
     int *conf = (int*)p.obtieneDatos();
+    cout << *conf << endl;
     return *conf;
 }
 

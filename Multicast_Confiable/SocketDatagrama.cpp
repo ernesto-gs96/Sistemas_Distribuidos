@@ -70,6 +70,7 @@ int SocketDatagrama::recibe(PaqueteDatagrama &paqueteDatagrama){
 }
 
 int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseconds_t microsegundos) {
+    
     int n;
     int client = sizeof(direccionForanea);
     timeval.tv_sec = segundos;
@@ -84,37 +85,24 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
     //int n = recibe(p);
     n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
     
-    if (n == -1)
-    {
-        cout << "ERROR EN RECVFROM METODO RECIBETIMEOUT" << endl;
-        cout << strerror (errno) << endl;
-        if (errno == EAGAIN)
-            return -2;
-    }
-    
-
-    /*while (n == -1)
-    {
-        //PRIMER ERROR AQUI
-        cout << "Error en recvfrom del metodo recibeTimeout" << endl;
-        cout << errno << endl;
-        cout << strerror (errno) << endl;
-        //printf("%s",strerror(errno));
-        n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
-    }*/
+    if(n < 0){
+		if(errno == EWOULDBLOCK)
+		{
+			fprintf(stderr, "Tiempo para recepción transcurrido\n");
+			return -1;
+		}
+		else
+		{
+			fprintf(stderr, "Error en recvfrom\n");
+            return 0;
+		}
+			
+	}
 
     p.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     p.inicializaPuerto(ntohs(direccionForanea.sin_port));
 
-    if ( n < 0 ) {
-        if (errno == EWOULDBLOCK) {
-            //fprintf(stderr, "Tiempo para recepción transcurrido\n"); 
-        } else
-            fprintf(stderr, "Error en recvfrom\n");
-        return -1;
-    }
     return 1;
-
 }
 
 struct sockaddr_in SocketDatagrama::getDirForanea() {

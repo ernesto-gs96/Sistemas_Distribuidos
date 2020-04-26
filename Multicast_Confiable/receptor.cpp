@@ -23,8 +23,9 @@ int main(int argc, char const *argv[])
     socketMulticast.unirseGrupo(ip);     
 
     while ( 1 ) {
-        cout << "Esperando respuesta..." << endl;
+        //cout << "Esperando respuesta..." << endl;
         n = socketMulticast.recibeConfiable(paqueteDatagrama_Recepcion);
+        cout << "n:" << n << endl;
         if (n == -2)
         {
             

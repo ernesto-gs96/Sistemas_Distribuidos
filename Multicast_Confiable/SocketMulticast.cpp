@@ -94,11 +94,11 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         n = socketUnicast.recibeTimeout(confirmacion,2,500000);
         while (n <= 0)
         {
-            cout << strerror (errno) << endl;
-            cout <<"\n"<< endl;
+            //cout << strerror (errno) << endl;
+            //cout <<"\n"<< endl;
             if (nn == 7)
                 break;
-            
+            cout << "Enviando respuesta nuevamente..." << endl;
             n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
             if (n == -1){
                 cout << "ERROR EN SENDTO METODO ENVIACONFIABLE" << endl;

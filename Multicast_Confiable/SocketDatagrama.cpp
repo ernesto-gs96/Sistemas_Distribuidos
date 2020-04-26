@@ -101,8 +101,9 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
 
     p.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     p.inicializaPuerto(ntohs(direccionForanea.sin_port));
-
-    return 1;
+    cout << p.obtieneDireccion() << endl;
+    int *conf = (int*)p.obtieneDatos();
+    return *conf;
 }
 
 struct sockaddr_in SocketDatagrama::getDirForanea() {

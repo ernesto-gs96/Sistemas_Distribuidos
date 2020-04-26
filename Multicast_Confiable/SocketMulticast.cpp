@@ -94,7 +94,8 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
         {
             if (nn == 7)
                 break;
-        
+            //socketUnicast.envia(confirmacion);
+            //PaqueteDatagrama confirmacion(paqueteDatagrama.obtieneDatos(), sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
             n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
             if (n == -1){
                 cout << "ERROR EN SENDTO METODO ENVIACONFIABLE" << endl;
@@ -105,7 +106,7 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
             nn++;
         }
         
-        cout << "n:" << n << endl;
+        //cout << "n:" << n << endl;
         if (n <= 0)
         {
             cout << "ERROR EN RECIBETIMEOUT METODO ENVIACONFIABLE" << endl;
@@ -152,13 +153,16 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     cout << paqueteDatagrama.obtieneDireccion() << endl;
     
     SocketDatagrama socketUnicast(7200);  
-    PaqueteDatagrama confirmacion(paqueteDatagrama.obtieneDatos(), sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
-    n = socketUnicast.envia(confirmacion);
-    if (n == -1)
-    {
-        cout << "ERROR ENVIA recibeConfiable" << endl;
-        //n = socketUnicast.envia(confirmacion);
-    }
+    PaqueteDatagrama confirmacion((char *)&n, sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
+    
+    
+        n = socketUnicast.envia(confirmacion);
+        if (n == -1){
+            cout << "ERROR ENVIA recibeConfiable" << endl;
+            //n = socketUnicast.envia(confirmacion);
+        }
+        //n = socketUnicast.recibeTimeout(confirmacion,2,500000);
+   // }while(n == -1);
     
     socketUnicast.~SocketDatagrama();
 

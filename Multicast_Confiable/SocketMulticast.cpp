@@ -87,7 +87,7 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
     }
 
     SocketDatagrama socketUnicast(7200);
-    PaqueteDatagrama confirmacion(sizeof(int));
+    PaqueteDatagrama confirmacion(2*sizeof(int));
 
     for(int i = 0; i < num_receptores; i++ ){
         
@@ -143,7 +143,7 @@ int SocketMulticast::recibe(PaqueteDatagrama &paqueteDatagrama) {
 
 int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     
-    int *id;
+    int datos[2];
     int aux;
     int client = sizeof(direccionForanea);
     
@@ -151,28 +151,28 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     if (n == -1){
         cout << "Error en recvfrom del metodo recibeConfiable" << endl;
     }
-    /*
-    id = (int*)paqueteDatagrama.obtieneDatos();
-    cout << &id << endl;
+    
+    memcpy(&datos,paqueteDatagrama.obtieneDatos(),2 * sizeof(int));
+    cout << datos[1] << endl;
     for (int i = 0; i < indicador; i++){
-        cout << historial[i].requestId << " =?= "<< id[1] << endl;
-        if (id[1] == historial[i].requestId)
+        cout << historial[i].requestId << " =?= "<< datos[1] << endl;
+        if (datos[1] == historial[i].requestId)
             return -2;
     }
     
 
     cout << "Guardando mensaje en historial" << endl;
-    memcpy(historial[indicador].arguments, id, sizeof(int)); //Ultimo mensaje enviado
+    memcpy(historial[indicador].arguments, paqueteDatagrama.obtieneDatos(), 2*sizeof(int)); //Ultimo mensaje enviado
 	memcpy(historial[indicador].ip, paqueteDatagrama.obtieneDireccion(), 16);
 	historial[indicador].puerto = paqueteDatagrama.obtienePuerto();
-	historial[indicador++].requestId = id[1];
-*/
+	historial[indicador++].requestId = datos[1];
+
     paqueteDatagrama.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));
     cout << paqueteDatagrama.obtieneDireccion() << endl;
     
     SocketDatagrama socketUnicast(7200);  
-    PaqueteDatagrama confirmacion((char *)&n, sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
+    PaqueteDatagrama confirmacion((char*)paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(),paqueteDatagrama.obtieneDireccion(),7200);
     
     
     n = socketUnicast.envia(confirmacion);
@@ -182,7 +182,7 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     
     socketUnicast.~SocketDatagrama();
 
-    memcpy(&aux,paqueteDatagrama.obtieneDatos(),sizeof(int));
+    memcpy(&aux,paqueteDatagrama.obtieneDatos(),2*sizeof(int));
 
     return aux;
 }

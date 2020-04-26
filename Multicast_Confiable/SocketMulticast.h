@@ -1,4 +1,5 @@
 #include "PaqueteDatagrama.h"
+#include "Historial.h"
 #include <netinet/in.h>
 
 #ifndef SOCKETMULTICAST_H_
@@ -11,6 +12,8 @@ private:
     struct ip_mreq multicast;
     struct sockaddr_in direccionLocal;
     struct sockaddr_in direccionForanea;
+    struct historial historial[100];
+    int indicador = 0;
 public:
     SocketMulticast(int puerto);
     ~SocketMulticast();

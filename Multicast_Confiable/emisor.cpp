@@ -32,7 +32,8 @@ int main(int argc, char const *argv[]){
     for(int i = 0; i < numd; i++ ){
         deposito = rand() %  9 + 1;
         cout << deposito << endl;
-        aux = &(deposito);
+        aux[0] = deposito;
+        aux[1] = i;// id
         PaqueteDatagrama paqueteDatagrama_Envio((char*)aux,sizeof(int),ip,puerto);
         int verificacion = socketMulticast.enviaConfiable(paqueteDatagrama_Envio,ttl,numr);
         cout << "Estamos en: " << i << endl;

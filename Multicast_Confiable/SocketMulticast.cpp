@@ -106,11 +106,12 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
             n = socketUnicast.recibeTimeout(confirmacion,2,500000);
             nn++;
         }
-        
+        memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
         if (n <= 0)
         {
             cout << "ERROR EN RECIBETIMEOUT METODO ENVIACONFIABLE" << endl;
             cout << strerror (errno) << endl;
+            break;
         }
         else{
             memcpy(&id,confirmacion.obtieneDatos(),sizeof(int));
@@ -140,6 +141,7 @@ int SocketMulticast::recibe(PaqueteDatagrama &paqueteDatagrama) {
 
 int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     
+    int *id;
     int aux;
     int client = sizeof(direccionForanea);
     
@@ -147,6 +149,17 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     if (n == -1){
         cout << "Error en recvfrom del metodo recibeConfiable" << endl;
     }
+    id = (int*)paqueteDatagrama.obtieneDatos();
+
+    for (int i = 0; i < indicador; i++){
+        if (id[1] == historial[i].requestId)
+            return -2;
+    }    
+
+    memcpy(historial[indicador].arguments, id, sizeof(int)); //Ultimo mensaje enviado
+	memcpy(historial[indicador].ip, paqueteDatagrama.obtieneDireccion(), 16);
+	historial[indicador].puerto = paqueteDatagrama.obtienePuerto();
+	historial[indicador++].requestId = id[1];
 
     paqueteDatagrama.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
     paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));

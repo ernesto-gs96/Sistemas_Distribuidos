@@ -164,7 +164,7 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     }
     
 
-    cout << "Guardando mensaje en historial" << endl;
+    //cout << "Guardando mensaje en historial" << endl;
     memcpy(historial[indicador].arguments, paqueteDatagrama.obtieneDatos(), 2*sizeof(int)); //Ultimo mensaje enviado
 	memcpy(historial[indicador].ip, paqueteDatagrama.obtieneDireccion(), 16);
 	historial[indicador].puerto = paqueteDatagrama.obtienePuerto();

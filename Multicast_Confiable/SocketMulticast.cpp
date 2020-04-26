@@ -160,21 +160,6 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     for (int i = 0; i < indicador; i++){
         //cout << historial[i].requestId << " =?= "<< datos[1] << endl;
         if (datos[1] == historial[i].requestId){
-            paqueteDatagrama.inicializaIp(inet_ntoa(direccionForanea.sin_addr));
-            paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));
-            cout << paqueteDatagrama.obtieneDireccion() << endl;
-            
-            SocketDatagrama socketUnicast(6200);  
-            PaqueteDatagrama confirmacion((char*)paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(),paqueteDatagrama.obtieneDireccion(),7200);
-            
-            
-            n = socketUnicast.envia(confirmacion);
-            if (n == -1){
-                cout << "ERROR ENVIA recibeConfiable" << endl;
-            }
-            
-            socketUnicast.~SocketDatagrama();
-
             return -2;
         }
     }

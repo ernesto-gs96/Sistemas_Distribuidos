@@ -28,7 +28,7 @@ int main(int argc, char const *argv[])
         //cout << "n:" << n << endl;
         if (n == -2)
         {
-            
+            //Mensaje repetido no hacer la operacion nuevamente
         }
         else{
             memcpy(&datos,paqueteDatagrama_Recepcion.obtieneDatos(),2*sizeof(int));

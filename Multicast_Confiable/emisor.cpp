@@ -34,7 +34,7 @@ int main(int argc, char const *argv[]){
         cout << deposito << endl;
         aux = &(deposito);
         PaqueteDatagrama paqueteDatagrama_Envio((char*)aux,sizeof(int),ip,puerto);
-        int verificacion = socketMulticast.envia(paqueteDatagrama_Envio,ttl);
+        int verificacion = socketMulticast.enviaConfiable(paqueteDatagrama_Envio,ttl,numr);
         cout << "Estamos en: " << i << endl;
         if ( verificacion == -1 ) {
             cout << "Ha ocurrido un errror" << endl;

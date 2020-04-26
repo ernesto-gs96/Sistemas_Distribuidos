@@ -96,22 +96,17 @@ int SocketMulticast::enviaConfiable(PaqueteDatagrama & paqueteDatagrama, unsigne
             cout <<"\n"<< endl;
             if (nn == 7)
                 break;
-            //socketUnicast.envia(confirmacion);
-            //PaqueteDatagrama confirmacion(paqueteDatagrama.obtieneDatos(), sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
-            //if(n == -2){
-                 n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
-                if (n == -1){
-                    cout << "ERROR EN SENDTO METODO ENVIACONFIABLE" << endl;
-                    cout << strerror (errno) << endl;
-                }
-            //}
-               
+            
+            n = sendto(s, paqueteDatagrama.obtieneDatos(), paqueteDatagrama.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t)client);
+            if (n == -1){
+                cout << "ERROR EN SENDTO METODO ENVIACONFIABLE" << endl;
+                cout << strerror (errno) << endl;
+            }           
                 
             n = socketUnicast.recibeTimeout(confirmacion,2,500000);
             nn++;
         }
         
-        //cout << "n:" << n << endl;
         if (n <= 0)
         {
             cout << "ERROR EN RECIBETIMEOUT METODO ENVIACONFIABLE" << endl;
@@ -161,13 +156,10 @@ int SocketMulticast::recibeConfiable(PaqueteDatagrama &paqueteDatagrama) {
     PaqueteDatagrama confirmacion((char *)&n, sizeof(int),paqueteDatagrama.obtieneDireccion(),7200);
     
     
-        n = socketUnicast.envia(confirmacion);
-        if (n == -1){
-            cout << "ERROR ENVIA recibeConfiable" << endl;
-            //n = socketUnicast.envia(confirmacion);
-        }
-        //n = socketUnicast.recibeTimeout(confirmacion,2,500000);
-   // }while(n == -1);
+    n = socketUnicast.envia(confirmacion);
+    if (n == -1){
+        cout << "ERROR ENVIA recibeConfiable" << endl;
+    }
     
     socketUnicast.~SocketDatagrama();
 

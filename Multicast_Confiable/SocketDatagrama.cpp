@@ -62,9 +62,9 @@ int SocketDatagrama::recibe(PaqueteDatagrama &paqueteDatagrama){
     paqueteDatagrama.inicializaPuerto(ntohs(direccionForanea.sin_port));
     
     if(n<0){
-        //std::cout<<"No se recibio"<<std::endl;
+        cout<<"No se recibio"<<endl;
     }else{
-        //std::cout<<"Se recibio"<<std::endl;
+        cout<<"Se recibio"<<endl;
     }
     return n;
 }
@@ -82,9 +82,7 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama & p, time_t segundos, suseco
         cout << "ERROR EN SETSCOCKOPT METODO RECIBETIMEOUT" << endl;
         cout << strerror (errno) << endl;
     }
-    //int n = recibe(p);
-    int nn;
-    //n = recvfrom(s, p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
+    
     n = recvfrom(s,p.obtieneDatos(), p.obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, (socklen_t*)&client);
     if(n < 0){
 		if(errno == EWOULDBLOCK)

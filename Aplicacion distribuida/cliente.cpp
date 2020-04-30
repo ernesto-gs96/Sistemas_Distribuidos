@@ -1,56 +1,38 @@
+#include "Solicitud.h"
 #include "PaqueteDatagrama.h"
 #include "SocketDatagrama.h"
-#include <stdio.h>
+#include <iostream>
 #include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <iostream> 
-#include <iterator> 
-#include <fstream>
-#include <fcntl.h>
-
-#define TAM_MAX 34
-
-char buffer[TAM_MAX];
-
+#include <cstdlib>
 using namespace std;
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
 
-	if(argc < 4){
-		cout<<"MODO DE USO :"<<endl<<"./cliente <ip> <port> <archivo_origen>"<<endl;
+	if(argc < 3){
+		cout<<"MODO DE USO :"<<endl<<"./cliente <ip> <puerto> <numeroSolicitudes>"<<endl;
 		return -1;
 
 	}
-	
+
+	srand (time(NULL));
+	char* response;
 	char* ip = argv[1];
-	int port = (int)*argv[2];
-	int origen, nbytes, i = 0;
-
-	if((origen = open(argv[3],O_RDONLY)) == -1){
-        perror(argv[1]);
-        exit(-1);
-    }
-
-	SocketDatagrama socket = SocketDatagrama(7000);
-
-	while ((nbytes = read(origen,buffer,sizeof buffer)) > 0){
-
-		//write(destino, buffer, nbytes);
-		//Creamos un paquete datagram de 'envio'
-		PaqueteDatagrama datagrama = PaqueteDatagrama((char *) buffer, sizeof(buffer),ip, 7001);
-		socket.envia(&datagrama); //Se manda el datagrama al servidor
-		cout << "i:" << i << endl;
-		//Se crea un paquete datagram de 'recibo'
-		//PaqueteDatagrama databack =  PaqueteDatagrama(sizeof(int));
-		//socket.recibe(&databack); //Se recibe el datagrama de recibo
-
-		//int * ans = (int*)databack.obtieneDatos(); //Obtenemso lo datos del datagrama de recibo
-		cout << "Dato:" << datagrama.obtieneDatos() << endl;
-		cout << " Dirección " << datagrama.obtieneDireccion() << " puerto: " << datagrama.obtienePuerto() << endl;
-		//cout << "Respuesta="<<(*ans) << endl;
-		i++;
+	int puerto = atoi(argv[2]), cantidad[1], n = atoi(argv[3]), ires, sumIdeal = 0;
+	Solicitud cli;
+	for(int i = 0; i <= n; i++){
+		cantidad[0] = rand() % 9 + 1;		
+		response = cli.doOperation(ip,puerto,1,(int*)cantidad);
+		memcpy(&ires, response, 4);
+		sumIdeal += cantidad[0];
+		if(sumIdeal != ires){
+			cout << "Error: Monto incorrecto, esperado: " << sumIdeal << ", obtenido: " << ires << endl;
+			exit(-1);
+		}else
+			cout << "Esperado: " << sumIdeal << ", obtenido: " << ires << endl;
+		cout <<"------------------------------------------------------------" << endl;
 	}
+
 	
 	return 0;
 }

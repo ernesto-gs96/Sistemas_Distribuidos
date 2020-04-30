@@ -1,56 +1,47 @@
 #include "PaqueteDatagrama.h"
 #include "SocketDatagrama.h"
-#include <stdio.h>
+#include <cstdlib>
+#include <iostream>
 #include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <iostream> 
-#include <iterator> 
-#include <fstream>
-#include <fcntl.h>
-
-#define TAM_MAX 34
-
-char buffer[TAM_MAX];
-
+#include <vector>
+#include "Respuesta.h"
 using namespace std;
 
-int main(int argc, char* argv[]){
+int main(int argc, char *argv[])
+{
 
-  if(argc < 2){
-		cout<<"MODO DE USO :"<<endl<<"./cliente <port> <archivo_destino>"<<endl;
-		return -1;
-
-	}
-	
-	int port = (int)*argv[1];
-	int nbytes, destino, i = 0;
-
-  if ((destino = open(argv[2], O_WRONLY|O_TRUNC|O_CREAT,0666)) == -1){
-    perror(argv[2]);
-    exit(-1);
+  if (argc < 2)
+  {
+    cout << "Modo de uso" << endl
+         << "./Servidor <puerto>" << endl;
+    return -1;
   }
+  int p = atoi(argv[1]);
+  int nbd = 0;  
+  Respuesta respuesta(p);
 
-  char * datos;
+  while (1)
+  {
+    struct mensaje mssgRecibido;
+    struct mensaje messgEnviar;
+    memcpy(&mssgRecibido, respuesta.getRequest(), sizeof(struct mensaje));
 
-  //Se crea un socket para recibir informacipn en el puerto 7001
-  SocketDatagrama socket = SocketDatagrama(7001);
+    int deposito = (mssgRecibido.arguments[0]);
+    nbd += deposito;
 
-	while(1){
-    //Se crea un datagrama de 'recibo'
-		PaqueteDatagrama datagrama = PaqueteDatagrama(sizeof(buffer));
-		socket.recibe(&datagrama); //Se recibe el datagrama
+    cout << "ID :> " << mssgRecibido.requestId << endl;
 
-    //Obtenemos los datos de datagrama y los copiamos
-    memcpy(buffer, datagrama.obtieneDatos(), sizeof(datagrama.obtieneLongitud()));
-    write(destino, buffer, sizeof(buffer));
-		cout << "Dato:" << datagrama.obtieneDatos() << endl;
-    //Del dataframa recibido obtenemos, datos, puerto y direccion IP
-    cout << " Dirección " << datagrama.obtieneDireccion() <<" "<< "Puerto: " << datagrama.obtienePuerto() << endl;
-    //Creamos un datagrama de 'envio' con la respuesta, el tamaño de la respuesta, dir IP y puerto de quien envia
-    //PaqueteDatagrama databack =  PaqueteDatagrama((char*) &res, sizeof(bool), datagrama.obtieneDireccion(), datagrama.obtienePuerto());
-	  //socket.envia(&databack); //Enviamos el paquete de envio
+    if (mssgRecibido.operationId == 1)
+    {
+      cout << "NBD >: " << nbd << endl;
+      memcpy(messgEnviar.arguments, (char *)&nbd, sizeof(nbd));
+      messgEnviar.messageType = 1;
+      memcpy(messgEnviar.ip, mssgRecibido.ip, 16);
+      messgEnviar.puerto = mssgRecibido.puerto;
+      messgEnviar.requestId = mssgRecibido.requestId;
+      respuesta.sendReply((char *)messgEnviar.arguments, messgEnviar.ip, mssgRecibido.puerto);
+      cout << "-----------------------------------------" << endl;
     }
-
-    return 0;
+  }
+  return 0;
 }

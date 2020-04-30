@@ -1,7 +1,6 @@
 #include "SocketDatagrama.h"
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <cstring>
+
+
 
 SocketDatagrama::SocketDatagrama(int port)
 {
@@ -46,6 +45,38 @@ int SocketDatagrama::recibe(PaqueteDatagrama *p)
 	p->inicializaPuerto(ntohs(direccionForanea.sin_port));
 	return respuesta;
 }
+
+int SocketDatagrama::recibeTimeout(PaqueteDatagrama *p, time_t segundos, suseconds_t microsegundos)
+{
+	unsigned int addr_len = sizeof(direccionForanea);
+	timeout.tv_sec = segundos; //2
+	timeout.tv_usec = microsegundos;//500000
+
+	setsockopt(_s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
+	int respuesta;
+	respuesta = recvfrom(_s, p->obtieneDatos(), p->obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, &addr_len);
+	//cout << "Respuesta: " << respuesta << endl;
+	if(respuesta < 0){
+		if(errno == EWOULDBLOCK)
+		{
+			fprintf(stderr, "Tiempo para recepción transcurrido\n");
+			return -1;
+		}		
+
+		else
+		{
+			fprintf(stderr, "Error en recvfrom\n");
+		}
+			
+	}
+	p->inicializaIp(inet_ntoa(direccionForanea.sin_addr));
+	p->inicializaPuerto(ntohs(direccionForanea.sin_port));
+
+
+	return respuesta;
+
+}
+
 
 int SocketDatagrama::envia(PaqueteDatagrama *p)
 {

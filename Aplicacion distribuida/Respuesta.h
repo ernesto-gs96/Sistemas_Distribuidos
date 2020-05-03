@@ -3,6 +3,7 @@
 
 #include "SocketDatagrama.h"
 #include "Mensaje.h"
+#include "Historial.h"
 
 using namespace std;
 
@@ -18,6 +19,8 @@ class Respuesta
     SocketDatagrama *socketlocal;
     struct mensaje *contenido;
     unsigned int numSol;
+    struct historial historial[100];
+    int indicador = 0;
 };
 
 #endif

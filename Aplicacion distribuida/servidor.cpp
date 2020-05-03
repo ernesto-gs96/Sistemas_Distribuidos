@@ -48,10 +48,9 @@ int main(int argc, char *argv[])
     memcpy(&mssgRecibido, respuesta.getRequest(), sizeof(struct mensaje));
 
     //VOTO YA REPETIDO
-    if(&mssgRecibido == NULL){
+    if (mssgRecibido.operationId == 2){
       cout << "ID :> " << mssgRecibido.requestId << endl;
-      //1 VOTO 
-      if (mssgRecibido.operationId == 1){
+      //2 VOTO YA ENVIADO
         cout << "Voto: " << mssgRecibido.registro.celular << mssgRecibido.registro.CURP << mssgRecibido.registro.partido << endl;
        //MENSAJE DE VOTO REGISTRADO
         memcpy(messgEnviar.arguments, acuse2, sizeof(acuse2));
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
         messgEnviar.requestId = mssgRecibido.requestId;
         respuesta.sendReply((char *)messgEnviar.arguments, messgEnviar.ip, mssgRecibido.puerto);
         cout << "-----------------------------------------" << endl;
-      }
+      
     }
     else
     {

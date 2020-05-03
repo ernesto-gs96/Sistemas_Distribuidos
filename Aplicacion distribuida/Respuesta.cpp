@@ -32,7 +32,8 @@ struct mensaje* Respuesta::getRequest() {
 	for (int i = 0; i < indicador; i++){
         if (contenido->requestId == historial[i].requestId){
 			cout << "Paquete repetido..." << endl;
-            return NULL;
+			contenido->operationId = 2;
+            return contenido;
         }
     }
 	

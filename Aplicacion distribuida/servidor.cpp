@@ -1,41 +1,61 @@
 #include "PaqueteDatagrama.h"
 #include "SocketDatagrama.h"
-#include <cstdlib>
-#include <iostream>
-#include <string.h>
-#include <vector>
 #include "Respuesta.h"
+#include "Mensaje.h"
+#include "Registro.h"
+#include <cstdlib>
+#include <vector>
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <iostream> 
+#include <iterator> 
+#include <fstream>
+#include <fcntl.h>
+
+#define TAM_MAX 34
+char buffer[TAM_MAX];
+
 using namespace std;
 
 int main(int argc, char *argv[])
 {
 
-  if (argc < 2)
-  {
-    cout << "Modo de uso" << endl
-         << "./Servidor <puerto>" << endl;
-    return -1;
-  }
-  int p = atoi(argv[1]);
-  int nbd = 0;  
-  Respuesta respuesta(p);
+  if(argc < 2){
+		cout<<"MODO DE USO :"<<endl<<"./cliente <archivo_destino>"<<endl;
+		return -1;
+	}
 
-  while (1)
-  {
+  char acuse[25] = "VOTO REGISTRADO";
+  int p = 7001;
+  Respuesta respuesta(p);
+  vector<struct registro> registros_vector; 
+  int destino;
+
+  if ((destino = open(argv[1], O_WRONLY|O_TRUNC|O_CREAT,0666)) == -1){
+    perror(argv[1]);
+    exit(-1);
+  }
+
+  while (1){
     struct mensaje mssgRecibido;
     struct mensaje messgEnviar;
+
     memcpy(&mssgRecibido, respuesta.getRequest(), sizeof(struct mensaje));
-
-    int deposito = (mssgRecibido.arguments[0]);
-    nbd += deposito;
-
     cout << "ID :> " << mssgRecibido.requestId << endl;
 
-    if (mssgRecibido.operationId == 1)
-    {
-      cout << "NBD >: " << nbd << endl;
-      memcpy(messgEnviar.arguments, (char *)&nbd, sizeof(nbd));
-      messgEnviar.messageType = 1;
+    //1 VOTO 
+    if (mssgRecibido.operationId == 1){
+      cout << "ERROR" << endl;
+      cout << "Voto: " << mssgRecibido.registro.celular << mssgRecibido.registro.CURP << mssgRecibido.registro.partido << endl;
+      write(destino, mssgRecibido.arguments, 34);
+      write(destino, mssgRecibido.registro.celular, sizeof(mssgRecibido.registro.celular));
+      write(destino, mssgRecibido.registro.CURP, sizeof(mssgRecibido.registro.CURP));
+      write(destino, mssgRecibido.registro.partido, sizeof(mssgRecibido.registro.partido));
+      memcpy(messgEnviar.arguments, acuse, sizeof(acuse));
+      messgEnviar.messageType = 1; //1 RESPUESTA
       memcpy(messgEnviar.ip, mssgRecibido.ip, 16);
       messgEnviar.puerto = mssgRecibido.puerto;
       messgEnviar.requestId = mssgRecibido.requestId;

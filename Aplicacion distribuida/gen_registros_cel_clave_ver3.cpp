@@ -78,7 +78,10 @@ int main(int argc, char *argv[]){
 	for (std::vector<struct registro>::iterator it=registros_vector.begin(); it!=registros_vector.end(); ++it){
 		reg1 = *it;
 		write(archivo, &reg1, sizeof(reg1));
+		//cout << sizeof reg1.celular << endl;
+		//cout << sizeof reg1.CURP << endl;
+		//cout << sizeof reg1.partido << endl;
 		//write(archivo, "\n", sizeof("\n"));
-		//cout << sizeof(reg1) << endl;
+		//cout << reg1.celular << reg1.CURP << reg1.partido << endl;
 	}
 }

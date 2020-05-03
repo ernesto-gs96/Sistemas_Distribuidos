@@ -53,25 +53,20 @@ int SocketDatagrama::recibeTimeout(PaqueteDatagrama *p, time_t segundos, susecon
 	timeout.tv_usec = microsegundos;//500000
 
 	setsockopt(_s, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
-	int respuesta;
-	respuesta = recvfrom(_s, p->obtieneDatos(), p->obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, &addr_len);
+	int respuesta = recvfrom(_s, p->obtieneDatos(), p->obtieneLongitud(), 0, (struct sockaddr *)&direccionForanea, &addr_len);
 	//cout << "Respuesta: " << respuesta << endl;
 	if(respuesta < 0){
-		if(errno == EWOULDBLOCK)
-		{
+		if(errno == EWOULDBLOCK){
 			fprintf(stderr, "Tiempo para recepción transcurrido\n");
 			return -1;
 		}		
-
-		else
-		{
+		else{
 			fprintf(stderr, "Error en recvfrom\n");
 		}
 			
 	}
 	p->inicializaIp(inet_ntoa(direccionForanea.sin_addr));
 	p->inicializaPuerto(ntohs(direccionForanea.sin_port));
-
 
 	return respuesta;
 

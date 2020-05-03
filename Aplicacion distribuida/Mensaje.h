@@ -1,6 +1,6 @@
 #ifndef __Mensaje__
 #define __Mensaje__
-#define TAM_MAX_DATA 4000
+#include "Registro.h"
 //Definicion de identificadores para operaciones permitidas
 
 // Definicion del formato de mensaje
@@ -11,7 +11,8 @@ struct mensaje
     int messageType;        //0 = Solicitud, 1 = Respuesta
     unsigned int requestId; //Identificador del mensaje
     int operationId;        //Identificador de la operación
-    int arguments[TAM_MAX_DATA];
+    int arguments[100];
+    struct registro registro;
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#define BUFSIZ 8
+#define BUFSIZ 34
 
 char buffer[BUFSIZ]; /*Region de memoria para el
 almacenamiento temporal de datos*/
@@ -29,9 +29,12 @@ int main(int argc, char *argv[]){
     }
 
     //2
-    while ((nbytes = read(origen,buffer,sizeof buffer)) > 0)
+    while ((nbytes = read(origen,buffer,sizeof buffer)) > 0){
+
     //3
+	    //printf("%s %d\n",buffer,sizeof buffer);
         write(destino, buffer, nbytes);
+	}
     
     //4
     close(destino);

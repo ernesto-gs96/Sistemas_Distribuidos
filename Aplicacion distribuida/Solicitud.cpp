@@ -12,6 +12,7 @@ Solicitud::Solicitud() {
 char * Solicitud::doOperation(char* ip, int puerto, int operationId, struct registro arguments) {
 	
 	struct mensaje msj;
+	struct mensaje *msj2;
 
 	//RESETEO DE IDENTIFICADOR DE OPERACION
 	if (numSol == 32767)
@@ -28,7 +29,7 @@ char * Solicitud::doOperation(char* ip, int puerto, int operationId, struct regi
 	msj.operationId = operationId;
 	
 	memcpy(&msj.registro,&arguments,sizeof(arguments));
-	cout << "Mi voto:" << msj.registro.celular << msj.registro.CURP << msj.registro.partido << endl;
+	cout << "Mi voto: " << msj.registro.celular << msj.registro.CURP << msj.registro.partido << endl;
 	//memcpy(msj.registro, &arguments, sizeof(arguments));
 	//cout << msj.registro << endl;
 	//cout << "ERROR" << endl;
@@ -49,11 +50,13 @@ char * Solicitud::doOperation(char* ip, int puerto, int operationId, struct regi
 		bytes = socketlocal -> recibeTimeout(&paq1, 2, 500000);
 
 		if(bytes > 1){
-			char* resultado;
-			resultado = paq1.obtieneDatos();
+			char *response;
+			response = paq1.obtieneDatos();
+			//memcpy(response, msj2->arguments, sizeof(msj2->arguments));
+			cout << response << endl;
 			//cout << "Voto enviado -> " << resultado << endl;
 			numSol++;
-			return resultado;
+			return response;
 		}
 		else
 			cont ++;

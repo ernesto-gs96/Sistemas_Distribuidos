@@ -20,13 +20,9 @@ struct mensaje* Respuesta::getRequest() {
 	socketlocal->recibe(&dp);
     //Pasamos los datos    
 	contenido = (struct mensaje*) dp.obtieneDatos();
-	//cout << "ERROR" << endl;
-	//cout << contenido->registro->celular << endl;
-	//this->contenido->registro = (struct mensaje)dp.obtieneMensaje();
-	//contenido->registro = dp.obtieneMensaje();
 	contenido->puerto = dp.obtienePuerto();
 	memcpy(contenido->ip,dp.obtieneDireccion(),16);
-	cout << contenido->ip << endl;
+	//cout << contenido->ip << endl;
 	unsigned int reqId = 0;
 	memcpy(&reqId, &contenido->requestId, sizeof(contenido->requestId));
 	//ESTA LOGICA NO SERVIRA PARA MULTICAST

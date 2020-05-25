@@ -1,0 +1,5 @@
+run: server2
+	./server2
+
+server: server2.cpp
+	g++ server2.cpp -o server2
